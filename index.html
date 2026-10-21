@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>meow gelato. 喵咪冰淇淋</title>
+<meta name="theme-color" content="#FFE9F2">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon-180.png">
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  background:#FFE9F2;color:#5A4A52;overflow:hidden;touch-action:manipulation;
+}
+#app{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;background:linear-gradient(180deg,#FFE9F2 0%,#FFDCE9 55%,#FFD3E2 100%);overflow:hidden}
+/* ===== top bar ===== */
+#top{flex:none;display:flex;align-items:center;gap:8px;padding:10px 14px 6px}
+#logo{font-weight:900;font-size:16px;color:#C4547E;letter-spacing:.02em}
+#logo em{font-style:normal;color:#8A6FA8}
+#spacer{flex:1}
+.chip{background:#fff;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:800;color:#8A6F5A;box-shadow:0 2px 0 rgba(196,84,126,.12);display:flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+.chip.lv{color:#8A6FA8}
+#xpbar{width:52px;height:7px;background:#F3E4EC;border-radius:99px;overflow:hidden}
+#xpfill{height:100%;background:linear-gradient(90deg,#C99AD9,#9A6FC0);border-radius:99px;transition:width .4s}
+/* ===== scene ===== */
+#scene{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:0}
+#counter{position:absolute;bottom:0;left:-4%;width:108%;height:86px;background:linear-gradient(180deg,#FFF7FA,#FBE3EE);border-top:3px solid #E8A8C4;border-radius:22px 22px 0 0;box-shadow:0 -6px 24px rgba(196,84,126,.12)}
+#counter:before{content:'';position:absolute;top:-14px;left:0;right:0;height:14px;background:repeating-linear-gradient(90deg,#F6C7DA 0 26px,#FBDCE9 26px 52px);border-radius:14px;opacity:.6}
+/* ===== cat ===== */
+#catStage{position:absolute;bottom:62px;left:50%;transform:translateX(-50%);width:190px;height:210px;transition:transform .45s cubic-bezier(.2,1.3,.4,1),opacity .3s}
+#catStage.in{animation:catin .55s cubic-bezier(.2,1.3,.4,1)}
+@keyframes catin{from{transform:translateX(-170%)}to{transform:translateX(-50%)}}
+#catStage.leave{transform:translateX(160%);opacity:0}
+.cat{position:absolute;inset:0}
+.cat .tail{position:absolute;right:22px;bottom:8px;width:46px;height:70px;border:11px solid var(--c1);border-top-color:transparent;border-left-color:transparent;border-radius:0 0 60% 0;transform-origin:bottom left;animation:tailwag 1.6s ease-in-out infinite}
+@keyframes tailwag{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-14deg)}}
+.cat .body{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:120px;height:82px;background:var(--c1);border-radius:52px 52px 30px 30px}
+.cat .body .belly{position:absolute;left:50%;top:34px;transform:translateX(-50%);width:64px;height:44px;background:var(--c2);border-radius:50%}
+.cat .paw1,.cat .paw2{position:absolute;bottom:-2px;width:30px;height:16px;background:var(--c2);border-radius:10px}
+.cat .paw1{left:34px}.cat .paw2{right:34px}
+.cat .head{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:110px;height:96px;background:var(--c1);border-radius:46% 46% 44% 44%;z-index:2}
+.cat .earL,.cat .earR{position:absolute;top:-16px;width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-bottom:30px solid var(--c1)}
+.cat .earL{left:6px;transform:rotate(-14deg)}
+.cat .earR{right:6px;transform:rotate(14deg)}
+.cat .earL:after,.cat .earR:after{content:'';position:absolute;left:-8px;top:8px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:16px solid var(--c2)}
+.cat .patch{position:absolute;background:var(--c2);border-radius:50%}
+.cat .eyeL,.cat .eyeR{position:absolute;top:44px;width:11px;height:13px;background:#3A2E36;border-radius:50%;animation:blink 4.2s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.cat .eyeL{left:28px}.cat .eyeR{right:28px}
+.cat .muz{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:38px;height:26px;background:var(--c2);border-radius:50%}
+.cat .nose{position:absolute;left:50%;top:66px;transform:translateX(-50%);width:9px;height:6px;background:#E08AA8;border-radius:45%}
+.cat .mou{position:absolute;left:50%;top:74px;transform:translateX(-50%);width:12px;height:7px;border:2px solid #B07888;border-top:0;border-radius:0 0 12px 12px;background:transparent}
+.cat .mou.smile{width:16px}
+.cat .whk{position:absolute;top:70px;width:22px;height:2px;background:#C9A8B4;border-radius:2px}
+.cat .wh1{left:-16px;transform:rotate(8deg)}
+.cat .wh2{left:-16px;top:78px;transform:rotate(-4deg)}
+.cat .wh3{right:-16px;transform:rotate(-8deg)}
+.cat .wh4{right:-16px;top:78px;transform:rotate(4deg)}
+.cat .blushL,.cat .blushR{position:absolute;top:62px;width:14px;height:7px;background:#F5A8BC;border-radius:50%;opacity:.8}
+.cat .blushL{left:16px}.cat .blushR{right:16px}
+.cat.sad .mou{width:12px;height:6px;border:2px solid #B07888;border-bottom:0;border-radius:12px 12px 0 0;top:77px}
+.cat.happy .mou{width:20px;height:11px;border-radius:0 0 16px 16px}
+.cat.happy .eyeL,.cat.happy .eyeR{height:7px;top:47px;border-radius:10px 10px 0 0;background:#3A2E36}
+.cat.love .eyeL,.cat.love .eyeR{background:transparent}
+.cat.love .eyeL:before,.cat.love .eyeR:before{content:'♥';color:#E85D8A;font-size:15px;position:absolute;top:-4px;left:-3px}
+/* order bubble */
+#bubble{position:absolute;top:6px;left:4px;max-width:240px;background:#fff;border:2.5px solid #F0B9CF;border-radius:16px 16px 5px 16px;padding:10px 12px;box-shadow:0 4px 14px rgba(196,84,126,.15);z-index:5;opacity:0;transform:scale(.7);transform-origin:bottom left;transition:.35s cubic-bezier(.2,1.3,.4,1)}
+#bubble.show{opacity:1;transform:scale(1)}
+#bubble .say{font-size:12.5px;color:#9A7E8C;font-weight:700;line-height:1.5}
+#orderList{margin-top:7px;display:flex;flex-direction:column;gap:5px}
+.orow{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#6B5560}
+.odot{width:16px;height:16px;border-radius:50%;flex:none;border:2px solid rgba(0,0,0,.08)}
+.otag{font-size:11px;color:#B08CA0;font-weight:700}
+/* hearts / fx */
+.fx{position:absolute;font-size:22px;pointer-events:none;z-index:50;animation:fly 1.5s ease-out forwards}
+@keyframes fly{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-90px) scale(1.25);opacity:0}}
+/* ===== make bar ===== */
+#make{flex:none;background:#FFF9FB;border-top:3px solid #F0C6D8;padding:10px 14px calc(12px + env(safe-area-inset-bottom));position:relative;z-index:6}
+#makeTop{display:flex;align-items:center;gap:10px}
+#coneBox{flex:none;width:86px;height:104px;position:relative}
+#cone{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:0;height:0;border-left:26px solid transparent;border-right:26px solid transparent;border-top:64px solid #E8B87A;filter:drop-shadow(0 2px 2px rgba(150,100,50,.25))}
+#cone.waffle{border-top-color:#D9A05B}
+#scoops{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);display:flex;flex-direction:column-reverse;align-items:center;gap:-8px}
+.scoop{width:46px;height:40px;border-radius:50%;margin-top:-12px;border:2px solid rgba(0,0,0,.07);position:relative;animation:drop .4s cubic-bezier(.2,1.6,.4,1);box-shadow:inset -6px -6px 0 rgba(0,0,0,.08)}
+.scoop .sw{position:absolute;top:7px;left:9px;width:14px;height:8px;background:rgba(255,255,255,.55);border-radius:50%;transform:rotate(-18deg)}
+@keyframes drop{from{transform:translateY(-46px) scale(.7)}to{transform:none}}
+.toppingOn{position:absolute;font-size:17px;animation:drop .35s cubic-bezier(.2,1.6,.4,1)}
+#makeBtns{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.flGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.fbtn{border:2px solid #F2D3E0;background:#fff;border-radius:12px;padding:6px 2px;text-align:center;cursor:pointer;transition:.15s}
+.fbtn .fe{font-size:17px;line-height:1}
+.fbtn .fn{font-size:9.5px;font-weight:800;color:#8A6F7C;margin-top:2px;letter-spacing:.02em}
+.fbtn:active{transform:scale(.92)}
+.fbtn.sel{border-color:#E8749F;background:#FFEDF4}
+.topRow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.topRow::-webkit-scrollbar{display:none}
+.tbtn{flex:none;border:2px solid #EAD9E4;background:#fff;border-radius:10px;padding:4px 9px;font-size:11.5px;font-weight:800;color:#8A6F7C;cursor:pointer;display:flex;align-items:center;gap:3px}
+.tbtn:active{transform:scale(.92)}
+.tbtn.sel{border-color:#9A6FC0;background:#F5EDFB;color:#7A56A0}
+#actions{display:flex;gap:8px;margin-top:9px}
+.abtn{flex:1;border:0;border-radius:14px;padding:12px 0;font-size:14.5px;font-weight:900;cursor:pointer;font-family:inherit;letter-spacing:.04em}
+#btnUndo{background:#F3E4EC;color:#B08CA0}
+#btnServe{background:linear-gradient(135deg,#F98BB4,#E85D8A);color:#fff;box-shadow:0 4px 0 #C94777}
+.abtn:active{transform:translateY(2px)}
+#btnServe:active{box-shadow:0 2px 0 #C94777}
+#wait{font-size:11px;color:#C08AA4;font-weight:800;text-align:center;margin-top:7px;display:none}
+#wait.show{display:block}
+/* ===== overlays ===== */
+.ovl{position:absolute;inset:0;z-index:100;background:rgba(90,60,75,.45);display:none;align-items:flex-end}
+.ovl.open{display:flex}
+.sheet{width:100%;max-height:78%;background:#FFF7FA;border-radius:24px 24px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));overflow-y:auto;animation:up .35s cubic-bezier(.2,1,.3,1)}
+@keyframes up{from{transform:translateY(60%)}to{transform:none}}
+.shHead{display:flex;align-items:center;margin-bottom:10px}
+.shHead h3{font-size:16px;font-weight:900;color:#C4547E}
+.shHead .x{margin-left:auto;width:32px;height:32px;border:0;border-radius:50%;background:#F6DDE8;color:#C4547E;font-size:15px;font-weight:900;cursor:pointer}
+/* shop */
+.shopSec{font-size:12px;font-weight:900;color:#B08CA0;letter-spacing:.14em;margin:12px 0 7px}
+.sitem{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #F4DEE9;border-radius:14px;padding:9px 11px;margin-bottom:7px}
+.sitem .si{font-size:21px;width:34px;text-align:center}
+.sitem .st{flex:1;min-width:0}
+.sitem .st b{font-size:13.5px;color:#6B5560}
+.sitem .st small{display:block;font-size:10.5px;color:#B08CA0;font-weight:700;margin-top:1px}
+.buy{flex:none;border:0;background:linear-gradient(135deg,#F98BB4,#E85D8A);color:#fff;font-weight:900;font-size:12px;border-radius:10px;padding:8px 12px;cursor:pointer;font-family:inherit;font-variant-numeric:tabular-nums}
+.buy:disabled{background:#E8D9E2;color:#B9A4B2;box-shadow:none}
+.owned{flex:none;font-size:11px;font-weight:900;color:#7FC98F}
+/* dex */
+.dexGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.dcard{background:#fff;border:2px solid #F4DEE9;border-radius:14px;padding:10px 6px;text-align:center}
+.dcard .de{font-size:24px}
+.dcard .dn{font-size:12px;font-weight:900;color:#6B5560;margin-top:4px}
+.dcard .dl{font-size:10px;color:#C08AA4;font-weight:800;margin-top:2px}
+.dcard.off{opacity:.45;filter:grayscale(1)}
+/* result */
+#result{position:absolute;inset:0;z-index:90;background:rgba(90,60,75,.4);display:none;align-items:center;justify-content:center}
+#result.open{display:flex}
+.rc{background:#FFF7FA;border-radius:24px;padding:24px 26px;text-align:center;max-width:290px;animation:pin .5s cubic-bezier(.2,1.4,.4,1);border:3px solid #F6C7DA}
+@keyframes pin{from{transform:scale(.6);opacity:0}to{transform:none}}
+.rc .re{font-size:52px}
+.rc .rt{font-size:19px;font-weight:900;color:#C4547E;margin-top:8px}
+.rc .rd{font-size:12.5px;color:#9A7E8C;font-weight:700;margin-top:7px;line-height:1.7}
+.rc .coin{margin-top:12px;font-size:15px;font-weight:900;color:#C99044;font-variant-numeric:tabular-nums}
+.rc .rb{margin-top:16px;width:100%}
+/* corner btns */
+#corner{position:absolute;right:10px;top:52px;display:flex;flex-direction:column;gap:8px;z-index:20}
+.cbtn{width:46px;height:46px;border:0;border-radius:15px;background:#fff;box-shadow:0 3px 0 rgba(196,84,126,.15);font-size:21px;cursor:pointer}
+.cbtn:active{transform:translateY(2px);box-shadow:none}
+.cbtn .cn{display:block;font-size:8px;font-weight:900;color:#B08CA0;margin-top:-2px}
+/* title splash */
+#splash{position:absolute;inset:0;z-index:200;background:linear-gradient(180deg,#FFE9F2,#FFD3E2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .5s}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .se{font-size:64px;animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+#splash h1{font-size:26px;font-weight:900;color:#C4547E;letter-spacing:.04em}
+#splash p{font-size:12.5px;color:#B08CA0;font-weight:800}
+#splash .go{margin-top:18px;border:0;background:linear-gradient(135deg,#F98BB4,#E85D8A);color:#fff;font-size:16px;font-weight:900;border-radius:999px;padding:14px 44px;cursor:pointer;box-shadow:0 5px 0 #C94777;font-family:inherit}
+#splash .go:active{transform:translateY(3px);box-shadow:0 2px 0 #C94777}
+#combo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:60;font-size:20px;font-weight:900;color:#E85D8A;text-shadow:0 2px 0 #fff;opacity:0;pointer-events:none}
+#combo.show{animation:cpop .9s cubic-bezier(.2,1.4,.4,1)}
+@keyframes cpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-58%) scale(1.15)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <div id="logo">meow gelato.<em>喵咪冰淇淋</em></div>
+    <div id="spacer"></div>
+    <div class="chip">🐟 <span id="coins">0</span></div>
+    <div class="chip lv">Lv.<span id="lv">1</span><div id="xpbar"><div id="xpfill" style="width:0%"></div></div></div>
+  </div>
+
+  <div id="scene">
+    <div id="corner">
+      <button class="cbtn" id="btnDex">📖<span class="cn">图鉴</span></button>
+      <button class="cbtn" id="btnShop">🛒<span class="cn">商店</span></button>
+    </div>
+    <div id="bubble">
+      <div class="say" id="say"></div>
+      <div id="orderList"></div>
+    </div>
+    <div id="catStage"></div>
+    <div id="counter"></div>
+  </div>
+
+  <div id="make">
+    <div id="makeTop">
+      <div id="coneBox">
+        <div id="cone"></div>
+        <div id="scoops"></div>
+      </div>
+      <div id="makeBtns">
+        <div class="flGrid" id="flGrid"></div>
+        <div class="topRow" id="topRow"></div>
+      </div>
+    </div>
+    <div id="actions">
+      <button class="abtn" id="btnUndo">重做 🔄</button>
+      <button class="abtn" id="btnServe">上餐！🍦</button>
+    </div>
+    <div id="wait">小猫在等啦……尾巴摇得越来越快了</div>
+  </div>
+
+  <div class="ovl" id="shopOvl">
+    <div class="sheet">
+      <div class="shHead"><h3>🛒 采购单</h3><button class="x" id="shopX">✕</button></div>
+      <div id="shopBody"></div>
+    </div>
+  </div>
+
+  <div class="ovl" id="dexOvl">
+    <div class="sheet">
+      <div class="shHead"><h3>📖 小猫图鉴</h3><button class="x" id="dexX">✕</button></div>
+      <div id="dexBody"></div>
+    </div>
+  </div>
+
+  <div id="result">
+    <div class="rc">
+      <div class="re" id="rE">😻</div>
+      <div class="rt" id="rT">完美！</div>
+      <div class="rd" id="rD"></div>
+      <div class="coin" id="rC"></div>
+      <button class="abtn rb" id="rNext">下一位 →</button>
+    </div>
+  </div>
+
+  <div id="combo"></div>
+
+  <div id="splash">
+    <div class="se">🐱🍦</div>
+    <h1>meow gelato.</h1>
+    <p>喵咪冰淇淋店 · 今日开业</p>
+    <button class="go" id="btnStart">开门营业 →</button>
+  </div>
+</div>
+
+<script>
+/* ========== data ========== */
+const FLAVORS=[
+ {id:'van',  n:'香草', e:'🍦', c:'#F6EBD2', price:0},
+ {id:'str',  n:'草莓', e:'🍓', c:'#F79BB4', price:0},
+ {id:'cho',  n:'巧克力', e:'🍫', c:'#8A5A3C', price:0},
+ {id:'mat',  n:'抹茶', e:'🍵', c:'#9CC98A', price:120},
+ {id:'man',  n:'芒果', e:'🥭', c:'#F7C55C', price:180},
+ {id:'blu',  n:'蓝莓', e:'🫐', c:'#9A8AD9', price:260},
+ {id:'mint', n:'薄荷', e:'🌿', c:'#9BD9C9', price:340},
+ {id:'ses',  n:'黑芝麻', e:'⚫', c:'#6B6472', price:420},
+];
+const TOPS=[
+ {id:'jam',  n:'草莓酱', e:'🍓', price:0},
+ {id:'nut',  n:'坚果碎', e:'🥜', price:0},
+ {id:'spr',  n:'彩虹糖针', e:'🌈', price:90},
+ {id:'cher', n:'樱桃', e:'🍒', price:140},
+ {id:'ckie', n:'小饼干', e:'🍪', price:200},
+ {id:'kok',  n:'椰蓉', e:'🥥', price:260},
+];
+const CATS=[
+ {id:'ju',   n:'橘子', e:'🍊', c1:'#F5A65B', c2:'#FFF3E2', say:['喵～闻到草莓味了！','今天太阳好，想吃点凉凉的','我是橘子，请多关照喵']},
+ {id:'cow',  n:'奶牛', e:'🐄', c1:'#F2F0F4', c2:'#FFFFFF', say:['本猫只吃最好的那款喵','快点快点，我赶时间睡午觉','你的店…勉强合格喵']},
+ {id:'hua',  n:'花花', e:'🌸', c1:'#E8A87A', c2:'#FFEFE2', say:['给我来点甜的，要最甜的！','上次那家没有樱桃，生气','喵呜～好期待']},
+ {id:'mo',   n:'墨墨', e:'🖤', c1:'#4A4450', c2:'#8A8492', say:['……（安静地盯着冰淇淋机）','黑芝麻是本座的信仰喵','别出声，让我安静地吃']},
+ {id:'nuo',  n:'糯米', e:'🍡', c1:'#FBF6F0', c2:'#FFFFFF', say:['小小一口就好…骗人的，要最大份','喵～我害羞，但是想吃','可以打包一个吗？给妹妹的']},
+ {id:'yan',  n:'烟烟', e:'💨', c1:'#9AA2AE', c2:'#D9DEE4', say:['喵，随便来一个惊喜吧','听说这家很灵，特地来的','雨天和冰淇淋更配喵']},
+ {id:'hu',   n:'虎子', e:'🐯', c1:'#D9A05B', c2:'#F7E7CE', say:['本大猫要双倍！！','你这个筒…还行喵','嗷呜！好吃到咬自己尾巴']},
+ {id:'xue',  n:'雪球', e:'❄️', c1:'#EAEAF2', c2:'#FFFFFF', say:['要看起来像雪一样干净的','我是布偶，我只吃软的喵','（优雅地舔了一口）嗯。']},
+ {id:'ke',   n:'可可', e:'🤎', c1:'#B98A6A', c2:'#EAD9C9', say:['巧克力的，不要犹豫喵','暹罗的耳朵尖都竖起来了','给我加双份酱！']},
+ {id:'nian', n:'年糕', e:'🍥', c1:'#F7D9C4', c2:'#FFF7F0', say:['年糕年糕！两球年糕…不对，冰淇淋','刚才摔了一跤，要安慰一口','嘿嘿，被你抓到偷偷吃']},
+ {id:'hui',  n:'灰灰', e:'🐈‍⬛', c1:'#7A8088', c2:'#C4C9CF', say:['本喵吃过全城 37 家冰淇淋','这家…排第二吧（真香）','冷知识：猫没有甜味受体，但我有喵']},
+ {id:'zhi',  n:'芝麻', e:'🐾', c1:'#C4936A', c2:'#F0DFCE', say:['玳瑁的花色是天生的时髦喵','来点黑芝麻，呼应我的毛','老板，今天生意怎么样喵？']},
+];
+const LVX=l=>80+l*60;
+
+/* ========== state ========== */
+const KEY='meow-gelato-v1';
+let G=JSON.parse(localStorage.getItem(KEY)||'null');
+if(!G)G={coins:0,lv:1,xp:0,served:0,fl:['van','str','cho'],tp:['jam','nut'],waf:false,dex:{},combo:0,best:0};
+function save(){localStorage.setItem(KEY,JSON.stringify(G))}
+const $=id=>document.getElementById(id);
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+
+/* ========== order gen ========== */
+function makeOrder(){
+  const lv=G.lv;
+  const nS=lv<2?1:lv<4?2:(Math.random()<.7?2:3);
+  const nT=lv<2?(Math.random()<.5?0:1):lv<4?(Math.random()<.6?1:2):2;
+  const pool=G.fl.map(f=>FLAVORS.find(x=>x.id===f));
+  const scoops=[];
+  for(let i=0;i<nS;i++)scoops.push(rnd(pool).id);
+  const tp=G.tp.map(t=>TOPS.find(x=>x.id===t));
+  const tops=[];
+  for(let i=0;i<nT&&tp.length;i++){const t=rnd(tp);if(!tops.includes(t.id))tops.push(t.id);}
+  return {scoops,tops};
+}
+
+/* ========== cat ========== */
+let cur=null,order=null,made={scoops:[],tops:[]};
+const stage=$('catStage');
+function spawnCat(){
+  const seen=Object.keys(G.dex);
+  let cat;
+  if(seen.length&&Math.random()<.45){cat=CATS.find(c=>c.id===rnd(seen));}
+  else{const unseen=CATS.filter(c=>!G.dex[c.id]);cat=unseen.length?rnd(unseen):rnd(CATS);}
+  cur=cat;order=makeOrder();made={scoops:[],tops:[]};
+  setCatFace('');
+  $('say').textContent=rnd(cat.say);
+  $('orderList').innerHTML=
+    order.scoops.map((s,i)=>'<div class="orow"><span class="odot" style="background:'+flC(s)+'"></span>'+flN(s)+'冰淇淋 ×1'+(order.scoops.filter(x=>x===s).length>1?'':'')+'</div>').join('')+
+    order.tops.map(t=>'<div class="orow"><span style="font-size:14px">'+TOPS.find(x=>x.id===t).e+'</span>加 '+TOPS.find(x=>x.id===t).n+'</div>').join('')+
+    (order.scoops.length>1?'<div class="otag">（共 '+order.scoops.length+' 球）</div>':'');
+  stage.className='';stage.classList.add('in');
+  stage.querySelectorAll('.cat').forEach(e=>e.remove());
+  stage.insertAdjacentHTML('beforeend',catHTML(cat));
+  $('bubble').classList.remove('show');
+  setTimeout(()=>$('bubble').classList.add('show'),450);
+  renderScoops();
+}
+function catHTML(c){
+  return '<div class="cat" style="--c1:'+c.c1+';--c2:'+c.c2+'">'+
+   '<div class="tail"></div><div class="body"><div class="belly"></div><div class="paw1"></div><div class="paw2"></div></div>'+
+   '<div class="head"><div class="earL"></div><div class="earR"></div>'+
+   '<div class="eyeL"></div><div class="eyeR"></div><div class="muz"></div><div class="nose"></div><div class="mou"></div>'+
+   '<div class="whk wh1"></div><div class="whk wh2"></div><div class="whk wh3"></div><div class="whk wh4"></div>'+
+   '<div class="blushL"></div><div class="blushR"></div></div></div>';
+}
+function setCatFace(f){
+  const c=stage.querySelector('.cat');if(!c)return;
+  c.classList.remove('happy','sad','love');if(f)c.classList.add(f);
+}
+function flC(id){return FLAVORS.find(f=>f.id===id).c}
+function flN(id){return FLAVORS.find(f=>f.id===id).n}
+
+/* ========== making ========== */
+function renderScoops(){
+  const s=$('scoops');s.innerHTML='';
+  made.scoops.forEach(id=>{
+    const d=document.createElement('div');d.className='scoop';d.style.background=flC(id);
+    d.innerHTML='<span class="sw"></span>';s.appendChild(d);
+  });
+  made.tops.forEach(id=>{
+    const t=document.createElement('div');t.className='toppingOn';
+    t.textContent=TOPS.find(x=>x.id===id).e;
+    t.style.left=(20+Math.random()*40)+'px';t.style.top=(6+Math.random()*30)+'px';
+    s.appendChild(t);
+  });
+}
+function renderShopBtns(){
+  $('flGrid').innerHTML=G.fl.map(id=>{const f=FLAVORS.find(x=>x.id===id);
+    return '<button class="fbtn" data-f="'+id+'"><div class="fe">'+f.e+'</div><div class="fn">'+f.n+'</div></button>'}).join('');
+  $('topRow').innerHTML=G.tp.map(id=>{const t=TOPS.find(x=>x.id===id);
+    return '<button class="tbtn" data-t="'+id+'">'+t.e+' '+t.n+'</button>'}).join('');
+}
+$('flGrid').addEventListener('click',e=>{
+  const b=e.target.closest('.fbtn');if(!b)return;
+  if(made.scoops.length>=3){toastFx('最多 3 球喵','#E85D8A');return;}
+  made.scoops.push(b.dataset.f);
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel');setTimeout(()=>b.classList.remove('sel'),180);
+  renderScoops();
+});
+$('topRow').addEventListener('click',e=>{
+  const b=e.target.closest('.tbtn');if(!b)return;
+  const id=b.dataset.t;
+  if(made.tops.includes(id)){made.tops=made.tops.filter(x=>x!==id);b.classList.remove('sel');}
+  else{if(made.tops.length>=3){toastFx('配料太多会掉喵','#7A56A0');return;}made.tops.push(id);b.classList.add('sel');}
+  renderScoops();
+});
+$('btnUndo').addEventListener('click',()=>{
+  if(made.tops.length){made.tops.pop();}
+  else if(made.scoops.length){made.scoops.pop();}
+  else{made={scoops:[],tops:[]};}
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('sel',made.tops.includes(b.dataset.t)));
+  renderScoops();
+});
+
+/* ========== serve & judge ========== */
+function multisetEq(a,b){return a.length===b.length&&[...a].sort().join()===[...b].sort().join();}
+$('btnServe').addEventListener('click',()=>{
+  if(!made.scoops.length){toastFx('至少要一球冰淇淋喵','#E85D8A');return;}
+  const okS=multisetEq(made.scoops,order.scoops);
+  const okT=multisetEq(made.tops,order.tops);
+  let grade,emo,txt,pay,love;
+  const base=made.scoops.length*8+made.tops.length*3+6;
+  if(okS&&okT){
+    G.combo++;
+    const mult=1+Math.min(G.combo-1,5)*0.1;
+    pay=Math.round(base*mult);love=2;grade='perfect';
+    emo=G.combo>=3?'🥰':'😻';txt='完美！'+(G.combo>=3?' 连击 ×'+G.combo+'！':'');
+    if(G.combo>=2)showCombo('COMBO ×'+G.combo);
+  }else if(okS){
+    G.combo=0;pay=Math.round(base*0.7);love=1;grade='ok';
+    emo='😺';txt='不错哦，就是配料差了一点喵～';
+  }else{
+    G.combo=0;pay=Math.max(3,Math.round(base*0.35));love=0;grade='miss';
+    emo='😿';txt='好像不太对…不过没关系喵，下次一定！';
+  }
+  G.coins+=pay;G.served++;G.xp+=10;
+  let leveled=false;
+  while(G.xp>=LVX(G.lv)){G.xp-=LVX(G.lv);G.lv++;leveled=true;}
+  const d=G.dex[cur.id]||{n:0,love:0};
+  d.n++;d.love+=love;G.dex[cur.id]=d;
+  G.best=Math.max(G.best,G.combo);
+  save();renderTop();
+  setCatFace(grade==='perfect'?'love':grade==='ok'?'happy':'sad');
+  $('say').textContent=grade==='perfect'?['好吃到踩奶了喵！！','这就是天堂的味道喵～','五星好评！下次带朋友来'][Math.floor(Math.random()*3)]
+    :grade==='ok'?['嗯嗯，可以接受喵','料加对了就更棒了喵']:['呜…没关系，老板加油喵','我还回来再买的喵！'][Math.floor(Math.random()*2)];
+  for(let i=0;i<(grade==='perfect'?6:2);i++)setTimeout(()=>fx(rnd(['💖','✨','💫','⭐']),150+Math.random()*160),i*140);
+  $('rE').textContent=emo;$('rT').textContent=txt;
+  $('rD').innerHTML='接待了 <b>'+cur.n+'</b>（第 '+d.n+' 次 · ♥'+d.love+'）'+(leveled?'<br>🎉 店铺升到 Lv.'+G.lv+'！可能解锁新客人的订单':'');
+  $('rC').textContent='+'+pay+' 🐟';
+  $('result').classList.add('open');
+});
+$('rNext').addEventListener('click',()=>{
+  $('result').classList.remove('open');
+  stage.classList.add('leave');
+  $('bubble').classList.remove('show');
+  setTimeout(spawnCat,480);
+});
+
+/* ========== shop ========== */
+function renderShop(){
+  const s=[];
+  s.push('<div class="shopSec">新的口味</div>');
+  FLAVORS.forEach(f=>{
+    if(f.price===0)return;
+    const own=G.fl.includes(f.id);
+    s.push('<div class="sitem"><div class="si">'+f.e+'</div><div class="st"><b>'+f.n+'</b><small>新口味 = 新订单 = 新收入</small></div>'+
+      (own?'<span class="owned">已拥有 ✓</span>':'<button class="buy" data-buyf="'+f.id+'" '+(G.coins<f.price?'disabled':'')+'>'+f.price+' 🐟</button>')+'</div>');
+  });
+  s.push('<div class="shopSec">新的配料</div>');
+  TOPS.forEach(t=>{
+    if(t.price===0)return;
+    const own=G.tp.includes(t.id);
+    s.push('<div class="sitem"><div class="si">'+t.e+'</div><div class="st"><b>'+t.n+'</b><small>小猫们都喜欢多一点选择</small></div>'+
+      (own?'<span class="owned">已拥有 ✓</span>':'<button class="buy" data-buyt="'+t.id+'" '+(G.coins<t.price?'disabled':'')+'>'+t.price+' 🐟</button>')+'</div>');
+  });
+  s.push('<div class="shopSec">店铺</div>');
+  s.push('<div class="sitem"><div class="si">🎿</div><div class="st"><b>华夫脆筒</b><small>更香更脆，小猫好感 +100（心里）</small></div>'+
+    (G.waf?'<span class="owned">已拥有 ✓</span>':'<button class="buy" data-buyw="1" '+(G.coins<150?'disabled':'')+'>150 🐟</button>')+'</div>');
+  $('shopBody').innerHTML=s.join('');
+}
+$('shopBody').addEventListener('click',e=>{
+  const b=e.target.closest('.buy');if(!b||b.disabled)return;
+  if(b.dataset.buyf){const f=FLAVORS.find(x=>x.id===b.dataset.buyf);G.coins-=f.price;G.fl.push(f.id);toastFx('新口味上架：'+f.n+'！','#E85D8A');}
+  else if(b.dataset.buyt){const t=TOPS.find(x=>x.id===b.dataset.buyt);G.coins-=t.price;G.tp.push(t.id);toastFx('新配料上架：'+t.n+'！','#7A56A0');}
+  else if(b.dataset.buyw){G.coins-=150;G.waf=true;$('cone').classList.add('waffle');toastFx('华夫脆筒换上了！','#C99044');}
+  save();renderTop();renderShopBtns();renderShop();
+});
+
+/* ========== dex ========== */
+function renderDex(){
+  $('dexBody').innerHTML='<div class="dexGrid">'+CATS.map(c=>{
+    const d=G.dex[c.id];
+    return '<div class="dcard'+(d?'':' off')+'"><div class="de">'+c.e+'</div><div class="dn">'+(d?c.n:'？？？')+'</div>'+
+      '<div class="dl">'+(d?'来过 '+d.n+' 次 · ♥'+d.love:'还没来过')+'</div></div>';
+  }).join('')+'</div><div style="margin-top:12px;font-size:11px;color:#C08AA4;font-weight:700;text-align:center;line-height:1.8">接待过的小猫会常来，爱心攒起来吧<br>已解锁 '+Object.keys(G.dex).length+' / '+CATS.length+' 只</div>';
+}
+
+/* ========== fx helpers ========== */
+function fx(ch,x){
+  const e=document.createElement('div');e.className='fx';e.textContent=ch;
+  e.style.left=(x||30+Math.random()*40)+'%';e.style.bottom='240px';
+  $('scene').appendChild(e);setTimeout(()=>e.remove(),1500);
+}
+function toastFx(t,c){
+  const e=document.createElement('div');e.className='fx';e.textContent=t;
+  e.style.cssText+=';font-size:14px;font-weight:900;color:'+(c||'#E85D8A')+';left:50%;transform:translateX(-50%);bottom:300px;white-space:nowrap;animation:fly 1.2s ease-out forwards';
+  $('scene').appendChild(e);setTimeout(()=>e.remove(),1200);
+}
+function showCombo(t){
+  const e=$('combo');e.textContent=t;e.classList.remove('show');void e.offsetWidth;e.classList.add('show');
+}
+function renderTop(){
+  $('coins').textContent=G.coins;$('lv').textContent=G.lv;
+  $('xpfill').style.width=Math.min(100,G.xp/LVX(G.lv)*100)+'%';
+}
+
+/* ========== overlays ========== */
+$('btnShop').addEventListener('click',()=>{renderShop();$('shopOvl').classList.add('open')});
+$('shopX').addEventListener('click',()=>$('shopOvl').classList.remove('open'));
+$('shopOvl').addEventListener('click',e=>{if(e.target.id==='shopOvl')$('shopOvl').classList.remove('open')});
+$('btnDex').addEventListener('click',()=>{renderDex();$('dexOvl').classList.add('open')});
+$('dexX').addEventListener('click',()=>$('dexOvl').classList.remove('open'));
+$('dexOvl').addEventListener('click',e=>{if(e.target.id==='dexOvl')$('dexOvl').classList.remove('open')});
+
+/* ========== boot ========== */
+if(G.waf)$('cone').classList.add('waffle');
+renderTop();renderShopBtns();
+$('btnStart').addEventListener('click',()=>{
+  $('splash').classList.add('hide');
+  setTimeout(spawnCat,300);
+});
+window.addEventListener('error',e=>console.log('PAGEERROR:',e.message));
+</script>
+</body>
+</html>
